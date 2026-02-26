@@ -37,7 +37,7 @@ $HADOOP_HOME/sbin/start-dfs.sh
 echo "   → Attente NameNode + DataNode..."
 # Attendre que le NameNode soit sorti du safe mode ET qu'un DataNode soit enregistré
 until $HADOOP_HOME/bin/hdfs dfsadmin -report 2>&1 | grep -q "Live datanodes.*[1-9]"; do
-    sleep 3
+    sleep 30
 done
 # Forcer la sortie du safe mode (peut rester bloqué au redémarrage)
     $HADOOP_HOME/bin/hdfs dfsadmin -safemode leave > /dev/null 2>&1 || true
@@ -135,3 +135,4 @@ jps
 echo "============================================="
 
 tail -f /dev/null
+exit 0
