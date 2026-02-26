@@ -36,6 +36,10 @@ docker compose up -d
 
 # 3. Suivre les logs de démarrage
 docker compose logs -f bigdata
+
+# 4. Suivre les logs de démarrage ( CTRL+C pour sortir)
+netstat -anl | grep -E '9870|8088|19888|8080'
+
 ```
 
 Le cluster est prêt quand vous voyez `✅ Cluster Big Data prêt !`
