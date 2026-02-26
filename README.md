@@ -100,6 +100,10 @@ hdfs dfs -cat /output/part-r-00000
 
 ### Hive via Beeline (HiveServer2)
 ```bash
+
+echo "id,produit,montant" > ventes.csv && for i in {1..10}; do echo "$i,Produit_$(printf "%02d" $i),$((10 + RANDOM % 90)).$((RANDOM % 99))" >> ventes.csv; done
+hdfs dfs -put ventes.csv /input/ventes.csv
+
 beeline -u "jdbc:hive2://localhost:10000" -n root
 
 # Dans Beeline :
