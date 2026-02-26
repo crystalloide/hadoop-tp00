@@ -17,6 +17,8 @@ ENV HIVE_VERSION=3.1.3
 ENV TEZ_VERSION=0.10.3
 ENV SQOOP_VERSION=1.4.7
 ENV ZEPPELIN_VERSION=0.11.1
+# Connecteur MySQL JDBC pour Sqoop (Maven Central)
+ENV MYSQL_CONNECTOR_VERSION=8.0.33
 
 # ── Répertoires d'installation ───────────────────────────────
 ENV HADOOP_HOME=/opt/hadoop
@@ -36,18 +38,21 @@ ENV YARN_RESOURCEMANAGER_USER=root
 ENV YARN_NODEMANAGER_USER=root
 
 # ── 1. Dépendances système ───────────────────────────────────
+# Corrections Ubuntu 22.04 :
+#   - netcat       → netcat-openbsd  (paquet renommé)
+#   - mysql-client → default-mysql-client
+#   - libmysql-java supprimé → JAR JDBC téléchargé manuellement à l'étape 6
 RUN apt-get update && apt-get install -y --no-install-recommends \
     openjdk-8-jdk \
     ssh \
     rsync \
     curl \
     wget \
-    netcat \
+    netcat-openbsd \
     procps \
     python3 \
     python3-pip \
-    mysql-client \
-    libmysql-java \
+    default-mysql-client \
     net-tools \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -70,17 +75,19 @@ RUN wget -q "https://downloads.apache.org/hive/hive-${HIVE_VERSION}/apache-hive-
  && rm apache-hive-${HIVE_VERSION}-bin.tar.gz
 
 # ── 5. Tez ───────────────────────────────────────────────────
-RUN mkdir -p ${TEZ_HOME} \
+RUN mkdir -p ${TEZ_HOME}/conf \
  && wget -q "https://downloads.apache.org/tez/${TEZ_VERSION}/apache-tez-${TEZ_VERSION}-bin.tar.gz" \
  && tar -xzf apache-tez-${TEZ_VERSION}-bin.tar.gz -C ${TEZ_HOME} --strip-components=1 \
  && rm apache-tez-${TEZ_VERSION}-bin.tar.gz
 
-# ── 6. Sqoop ─────────────────────────────────────────────────
+# ── 6. Sqoop + connecteur MySQL JDBC ─────────────────────────
+# libmysql-java absent d'Ubuntu 22.04 → téléchargement direct depuis Maven Central
 RUN wget -q "https://archive.apache.org/dist/sqoop/${SQOOP_VERSION}/sqoop-${SQOOP_VERSION}.bin__hadoop-2.6.0.tar.gz" \
  && tar -xzf sqoop-${SQOOP_VERSION}.bin__hadoop-2.6.0.tar.gz -C /opt \
  && mv /opt/sqoop-${SQOOP_VERSION}.bin__hadoop-2.6.0 ${SQOOP_HOME} \
  && rm sqoop-${SQOOP_VERSION}.bin__hadoop-2.6.0.tar.gz \
- && cp /usr/share/java/mysql-connector-java-*.jar ${SQOOP_HOME}/lib/ 2>/dev/null || true
+ && wget -q -O ${SQOOP_HOME}/lib/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}.jar \
+    "https://repo1.maven.org/maven2/mysql/mysql-connector-java/${MYSQL_CONNECTOR_VERSION}/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}.jar"
 
 # ── 7. Zeppelin ───────────────────────────────────────────────
 RUN wget -q "https://downloads.apache.org/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-all.tgz" \
@@ -109,13 +116,6 @@ COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # ── Ports exposés ─────────────────────────────────────────────
-# HDFS NameNode UI  : 9870
-# HDFS DataNode UI  : 9864
-# YARN ResourceMgr  : 8088
-# MapReduce History : 19888
-# HiveServer2       : 10000
-# Hive Metastore    : 9083
-# Zeppelin          : 8080
 EXPOSE 9870 9864 8088 19888 10000 9083 8080
 
 ENTRYPOINT ["/entrypoint.sh"]
