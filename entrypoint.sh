@@ -53,6 +53,7 @@ echo "[5/7] Création des répertoires HDFS..."
 # On utilise || true pour éviter que set -e n'arrête le script si le dossier existe déjà bizarrement
 $HADOOP_HOME/bin/hdfs dfs -mkdir -p /user/root || true
 $HADOOP_HOME/bin/hdfs dfs -mkdir -p /user/hive/warehouse || true
+$HADOOP_HOME/bin/hdfs dfs -chmod 777 /user/hive/warehouse || true
 $HADOOP_HOME/bin/hdfs dfs -mkdir -p /tmp || true
 $HADOOP_HOME/bin/hdfs dfs -chmod g+w /tmp || true
 $HADOOP_HOME/bin/hdfs dfs -chmod g+w /user/hive/warehouse || true
