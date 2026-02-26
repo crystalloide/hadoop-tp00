@@ -95,7 +95,12 @@ RUN curl --retry 3 --max-time 120 --location --fail \
  && echo "Taille JAR : $(du -sh ${SQOOP_HOME}/lib/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}.jar)" \
  && echo "MySQL connector téléchargé : $(ls -lh ${SQOOP_HOME}/lib/mysql-connector-java-*.jar)"
 
-# ── 6c. Fix conflit Guava Sqoop vs Hadoop 3 ─────────────────
+# ── 6c. Fix commons-lang manquant (Sqoop 1.4.7 + Hadoop 3.x) ───────────
+# Hadoop 3.x ne fournit que commons-lang3 ; Sqoop attend commons-lang 2.x
+RUN curl -L -o ${SQOOP_HOME}/lib/commons-lang-2.6.jar \
+    "https://repo1.maven.org/maven2/commons-lang/commons-lang/2.6/commons-lang-2.6.jar"
+
+# ── 6d. Fix conflit Guava Sqoop vs Hadoop 3 ─────────────────
 # Hadoop 3.x embarque Guava 27+ ; Sqoop 1.4.7 attend Guava 11/14 → NoSuchMethodError
 # On remplace le vieux guava dans les libs Sqoop par celui de Hadoop
 RUN cp ${HADOOP_HOME}/share/hadoop/common/lib/guava-*.jar ${SQOOP_HOME}/lib/ \
@@ -120,6 +125,7 @@ COPY config/hadoop/hadoop-env.sh         ${HADOOP_HOME}/etc/hadoop/hadoop-env.sh
 # ── 9. Configuration Hive + Tez ───────────────────────────────
 COPY config/hive/hive-site.xml           ${HIVE_HOME}/conf/hive-site.xml
 COPY config/hive/hive-env.sh             ${HIVE_HOME}/conf/hive-env.sh
+COPY config/hive/tez-site.xml            ${HIVE_HOME}/conf/tez-site.xml
 COPY config/tez/tez-site.xml             ${TEZ_HOME}/conf/tez-site.xml
 
 # ── 10. Configuration Zeppelin ────────────────────────────────
