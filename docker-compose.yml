@@ -44,7 +44,8 @@ services:
       - namenode-data:/opt/hadoop/dfs/name      # NameNode metadata
       - datanode-data:/opt/hadoop/dfs/data      # DataNode blocs HDFS
       - hive-warehouse:/user/hive/warehouse     # Tables Hive
-      - zeppelin-notebooks:/opt/zeppelin/notebook # Notebooks Zeppelin
+      - ~/hadoop-tp00/config/zeppelin/Notebooks:/opt/zeppelin/notebook
+      #- zeppelin-notebooks:/opt/zeppelin/notebook # Notebooks Zeppelin
       #- ./entrypoint.sh:/entrypoint.sh
   
     # ── Ressources système ───────────────────────────────────
