@@ -8,7 +8,7 @@
   <!-- Adresse d'écoute -->
   <property>
     <name>zeppelin.server.addr</name>
-    <value>bigdata-node</value>
+    <value>0.0.0.0</value>
   </property>
 
   <!-- Port Zeppelin -->
