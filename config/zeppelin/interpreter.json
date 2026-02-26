@@ -418,7 +418,7 @@
       "properties": {
         "hdfs.url": {
           "name": "hdfs.url",
-          "value": "http://localhost:50070/webhdfs/v1/",
+          "value": "http://localhost:9870/webhdfs/v1/",
           "type": "url",
           "description": "The URL for WebHDFS"
         },
