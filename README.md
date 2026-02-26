@@ -74,6 +74,7 @@ hdfs dfs -rm -r /monrepertoire
 hdfs dfs -mkdir /monrepertoire
 
 # Uploader un fichier
+rm monFichier.csv
 echo "hadoop,hive,hadoop,tez,hive" > monFichier.csv
 hdfs dfs -put monFichier.csv /monrepertoire/
 
