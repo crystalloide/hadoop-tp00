@@ -18,7 +18,7 @@ ENV TEZ_VERSION=0.10.3
 ENV SQOOP_VERSION=1.4.7
 ENV ZEPPELIN_VERSION=0.11.1
 # MySQL Connector/J (com.mysql depuis 8.1, encore sous mysql/ pour 8.0.x)
-ENV MYSQL_CONNECTOR_VERSION=8.0.33
+ENV MYSQL_CONNECTOR_VERSION=5.1.49
 
 # ── Répertoires d'installation ───────────────────────────────
 ENV HADOOP_HOME=/opt/hadoop
@@ -92,6 +92,7 @@ RUN wget --tries=3 --timeout=120 -v \
 RUN curl --retry 3 --max-time 120 --location --fail \
     -o ${SQOOP_HOME}/lib/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}.jar \
     "https://repo1.maven.org/maven2/mysql/mysql-connector-java/${MYSQL_CONNECTOR_VERSION}/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}.jar" \
+ && echo "Taille JAR : $(du -sh ${SQOOP_HOME}/lib/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}.jar)" \
  && echo "MySQL connector téléchargé : $(ls -lh ${SQOOP_HOME}/lib/mysql-connector-java-*.jar)"
 
 # ── 6c. Fix conflit Guava Sqoop vs Hadoop 3 ─────────────────
