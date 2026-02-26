@@ -45,7 +45,8 @@ services:
       - datanode-data:/opt/hadoop/dfs/data      # DataNode blocs HDFS
       - hive-warehouse:/user/hive/warehouse     # Tables Hive
       - zeppelin-notebooks:/opt/zeppelin/notebook # Notebooks Zeppelin
-
+      #- ./entrypoint.sh:/entrypoint.sh
+  
     # ── Ressources système ───────────────────────────────────
     # Minimum recommandé : 4 Go RAM, 2 vCPU
     mem_limit: 10g
