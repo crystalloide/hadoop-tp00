@@ -88,6 +88,7 @@ hdfs dfs -mkdir /input
 hdfs dfs -put /tmp/texte.txt /input/
 
 # Lancer le job WordCount
+hdfs dfs -rm -r /output
 hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar \
   wordcount /input /output
 
