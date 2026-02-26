@@ -73,7 +73,7 @@ hdfs dfs -ls /
 hdfs dfs -mkdir /monrepertoire
 
 # Uploader un fichier
-echo "hadoop,hive,hadoop,tez,hive" > /tmp/monFichier.csv
+echo "hadoop,hive,hadoop,tez,hive" > monFichier.csv
 hdfs dfs -put monFichier.csv /monrepertoire/
 
 # Afficher un fichier
