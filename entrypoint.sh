@@ -63,6 +63,7 @@ if ! $HADOOP_HOME/bin/hdfs dfs -test -d /apps/tez; then
     echo "   → Upload de la lib Tez..."
     $HADOOP_HOME/bin/hdfs dfs -mkdir -p /apps/tez || true
     $HADOOP_HOME/bin/hdfs dfs -put ${TEZ_HOME}/share/tez.tar.gz /apps/tez/ || true
+    $HADOOP_HOME/bin/hdfs dfs -chmod 777 /apps/tez/tez.tar.gz || true
 fi
 
 # ── Hive ──────────────────────────────────────────────────────
