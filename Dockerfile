@@ -17,7 +17,6 @@ ENV HIVE_VERSION=3.1.3
 ENV TEZ_VERSION=0.10.3
 ENV SQOOP_VERSION=1.4.7
 ENV ZEPPELIN_VERSION=0.11.1
-# Connecteur MySQL JDBC pour Sqoop (Maven Central)
 ENV MYSQL_CONNECTOR_VERSION=8.0.33
 
 # ── Répertoires d'installation ───────────────────────────────
@@ -38,10 +37,6 @@ ENV YARN_RESOURCEMANAGER_USER=root
 ENV YARN_NODEMANAGER_USER=root
 
 # ── 1. Dépendances système ───────────────────────────────────
-# Corrections Ubuntu 22.04 :
-#   - netcat       → netcat-openbsd  (paquet renommé)
-#   - mysql-client → default-mysql-client
-#   - libmysql-java supprimé → JAR JDBC téléchargé manuellement à l'étape 6
 RUN apt-get update && apt-get install -y --no-install-recommends \
     openjdk-8-jdk \
     ssh \
@@ -63,25 +58,27 @@ RUN ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa \
  && echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
 
 # ── 3. Hadoop ────────────────────────────────────────────────
+# Hadoop 3.3.6 encore disponible sur le miroir principal
 RUN wget -q "https://downloads.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz" \
  && tar -xzf hadoop-${HADOOP_VERSION}.tar.gz -C /opt \
  && mv /opt/hadoop-${HADOOP_VERSION} ${HADOOP_HOME} \
  && rm hadoop-${HADOOP_VERSION}.tar.gz
 
 # ── 4. Hive ──────────────────────────────────────────────────
-RUN wget -q "https://downloads.apache.org/hive/hive-${HIVE_VERSION}/apache-hive-${HIVE_VERSION}-bin.tar.gz" \
+# Hive 3.1.3 déplacé sur archive.apache.org (plus sur le miroir principal)
+RUN wget -q "https://archive.apache.org/dist/hive/hive-${HIVE_VERSION}/apache-hive-${HIVE_VERSION}-bin.tar.gz" \
  && tar -xzf apache-hive-${HIVE_VERSION}-bin.tar.gz -C /opt \
  && mv /opt/apache-hive-${HIVE_VERSION}-bin ${HIVE_HOME} \
  && rm apache-hive-${HIVE_VERSION}-bin.tar.gz
 
 # ── 5. Tez ───────────────────────────────────────────────────
+# Tez 0.10.3 sur archive.apache.org
 RUN mkdir -p ${TEZ_HOME}/conf \
- && wget -q "https://downloads.apache.org/tez/${TEZ_VERSION}/apache-tez-${TEZ_VERSION}-bin.tar.gz" \
+ && wget -q "https://archive.apache.org/dist/tez/${TEZ_VERSION}/apache-tez-${TEZ_VERSION}-bin.tar.gz" \
  && tar -xzf apache-tez-${TEZ_VERSION}-bin.tar.gz -C ${TEZ_HOME} --strip-components=1 \
  && rm apache-tez-${TEZ_VERSION}-bin.tar.gz
 
 # ── 6. Sqoop + connecteur MySQL JDBC ─────────────────────────
-# libmysql-java absent d'Ubuntu 22.04 → téléchargement direct depuis Maven Central
 RUN wget -q "https://archive.apache.org/dist/sqoop/${SQOOP_VERSION}/sqoop-${SQOOP_VERSION}.bin__hadoop-2.6.0.tar.gz" \
  && tar -xzf sqoop-${SQOOP_VERSION}.bin__hadoop-2.6.0.tar.gz -C /opt \
  && mv /opt/sqoop-${SQOOP_VERSION}.bin__hadoop-2.6.0 ${SQOOP_HOME} \
@@ -90,7 +87,8 @@ RUN wget -q "https://archive.apache.org/dist/sqoop/${SQOOP_VERSION}/sqoop-${SQOO
     "https://repo1.maven.org/maven2/mysql/mysql-connector-java/${MYSQL_CONNECTOR_VERSION}/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}.jar"
 
 # ── 7. Zeppelin ───────────────────────────────────────────────
-RUN wget -q "https://downloads.apache.org/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-all.tgz" \
+# Zeppelin 0.11.1 sur archive.apache.org
+RUN wget -q "https://archive.apache.org/dist/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-all.tgz" \
  && tar -xzf zeppelin-${ZEPPELIN_VERSION}-bin-all.tgz -C /opt \
  && mv /opt/zeppelin-${ZEPPELIN_VERSION}-bin-all ${ZEPPELIN_HOME} \
  && rm zeppelin-${ZEPPELIN_VERSION}-bin-all.tgz
