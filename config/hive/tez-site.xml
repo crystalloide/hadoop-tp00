@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  tez-site.xml — Configuration Apache Tez
+  URI absolue obligatoire : ${fs.defaultFS} n'est pas résolu par Tez
+-->
+<configuration>
+
+  <!-- URI absolue du tarball Tez sur HDFS -->
+  <property>
+    <name>tez.lib.uris</name>
+    <value>hdfs://bigdata-node:9000/apps/tez/tez.tar.gz</value>
+    <description>Chemin HDFS complet — ne pas utiliser de variable ici</description>
+  </property>
+
+  <!-- Réutiliser les libs Hadoop du cluster plutôt que de les re-packager -->
+  <property>
+    <name>tez.use.cluster.hadoop-libs</name>
+    <value>true</value>
+  </property>
+
+  <!-- Mémoire de l'ApplicationMaster Tez -->
+  <property>
+    <name>tez.am.resource.memory.mb</name>
+    <value>512</value>
+  </property>
+
+  <!-- Mémoire des tâches Tez -->
+  <property>
+    <name>tez.task.resource.memory.mb</name>
+    <value>512</value>
+  </property>
+
+  <!-- Timeout de session Tez (évite les sessions zombie) -->
+  <property>
+    <name>tez.session.am.dag.submit.timeout.secs</name>
+    <value>300</value>
+  </property>
+
+</configuration>
