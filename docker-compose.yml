@@ -48,8 +48,8 @@ services:
 
     # ── Ressources système ───────────────────────────────────
     # Minimum recommandé : 4 Go RAM, 2 vCPU
-    mem_limit: 6g
-    cpus: "2.0"
+    mem_limit: 10g
+    cpus: "4.0"
 
     # ── Vérification santé ───────────────────────────────────
     healthcheck:
