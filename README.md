@@ -69,7 +69,8 @@ docker exec -it bigdata-cluster bash
 # Lister la racine
 hdfs dfs -ls /
 
-# Créer un répertoire
+# Supprimer / Créer un répertoire
+hdfs dfs -rm -r /monrepertoire
 hdfs dfs -mkdir /monrepertoire
 
 # Uploader un fichier
