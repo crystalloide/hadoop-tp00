@@ -34,11 +34,14 @@ fi
 echo "[3/7] Démarrage HDFS..."
 $HADOOP_HOME/sbin/start-dfs.sh
 
-echo "   → Attente NameNode..."
-until $HADOOP_HOME/bin/hdfs dfsadmin -report > /dev/null 2>&1; do
+echo "   → Attente NameNode + DataNode..."
+# Attendre que le NameNode soit sorti du safe mode ET qu'un DataNode soit enregistré
+until $HADOOP_HOME/bin/hdfs dfsadmin -report 2>&1 | grep -q "Live datanodes.*[1-9]"; do
     sleep 3
 done
-echo "   ✓ HDFS opérationnel"
+# Forcer la sortie du safe mode (peut rester bloqué au redémarrage)
+    $HADOOP_HOME/bin/hdfs dfsadmin -safemode leave > /dev/null 2>&1 || true
+    echo "   ✓ HDFS opérationnel (DataNode enregistré)"
 
 # ── YARN + MapReduce History ──────────────────────────────────
 echo "[4/7] Démarrage YARN + MapReduce History Server..."
