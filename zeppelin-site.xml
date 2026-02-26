@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  zeppelin-site.xml — Configuration Apache Zeppelin
+-->
+<configuration>
+
+  <!-- Adresse d'écoute -->
+  <property>
+    <n>zeppelin.server.addr</n>
+    <value>0.0.0.0</value>
+  </property>
+
+  <!-- Port Zeppelin -->
+  <property>
+    <n>zeppelin.server.port</n>
+    <value>8080</value>
+  </property>
+
+  <!-- Désactiver l'authentification (cours uniquement) -->
+  <property>
+    <n>zeppelin.anonymous.allowed</n>
+    <value>true</value>
+  </property>
+
+  <!-- Répertoire des notebooks -->
+  <property>
+    <n>zeppelin.notebook.dir</n>
+    <value>/opt/zeppelin/notebook</value>
+  </property>
+
+  <!-- Interpréteurs activés par défaut -->
+  <property>
+    <n>zeppelin.interpreters</n>
+    <value>org.apache.zeppelin.spark.SparkInterpreter,org.apache.zeppelin.hive.HiveInterpreter,org.apache.zeppelin.shell.ShellInterpreter,org.apache.zeppelin.markdown.Markdown</value>
+  </property>
+
+</configuration>

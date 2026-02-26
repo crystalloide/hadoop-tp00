@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  hive-site.xml — Configuration Apache Hive
+  Metastore embarqué Derby | Exécution via Tez
+-->
+<configuration>
+
+  <!-- ── Metastore ─────────────────────────────────────────── -->
+  <property>
+    <n>javax.jdo.option.ConnectionURL</n>
+    <value>jdbc:derby:;databaseName=/opt/hive/metastore_db;create=true</value>
+    <description>Derby embarqué — remplacer par MySQL pour la prod</description>
+  </property>
+  <property>
+    <n>javax.jdo.option.ConnectionDriverName</n>
+    <value>org.apache.derby.jdbc.EmbeddedDriver</value>
+  </property>
+  <property>
+    <n>javax.jdo.option.ConnectionUserName</n>
+    <value>APP</value>
+  </property>
+  <property>
+    <n>javax.jdo.option.ConnectionPassword</n>
+    <value>mine</value>
+  </property>
+
+  <!-- Adresse du Metastore Thrift -->
+  <property>
+    <n>hive.metastore.uris</n>
+    <value>thrift://bigdata-node:9083</value>
+  </property>
+
+  <!-- ── Warehouse HDFS ─────────────────────────────────────── -->
+  <property>
+    <n>hive.metastore.warehouse.dir</n>
+    <value>/user/hive/warehouse</value>
+  </property>
+
+  <!-- ── Moteur d'exécution : Tez ──────────────────────────── -->
+  <property>
+    <n>hive.execution.engine</n>
+    <value>tez</value>
+    <description>Utiliser Tez (plus rapide que MapReduce)</description>
+  </property>
+
+  <!-- ── HiveServer2 ────────────────────────────────────────── -->
+  <property>
+    <n>hive.server2.thrift.port</n>
+    <value>10000</value>
+  </property>
+  <property>
+    <n>hive.server2.thrift.bind.host</n>
+    <value>0.0.0.0</value>
+  </property>
+
+  <!-- Authentification désactivée (cours uniquement) -->
+  <property>
+    <n>hive.server2.authentication</n>
+    <value>NONE</value>
+  </property>
+
+  <!-- ── Optimisations pédagogiques ────────────────────────── -->
+  <!-- Afficher les statistiques de requêtes -->
+  <property>
+    <n>hive.stats.autogather</n>
+    <value>true</value>
+  </property>
+  <!-- Activer le vectorized query execution -->
+  <property>
+    <n>hive.vectorized.execution.enabled</n>
+    <value>true</value>
+  </property>
+
+</configuration>

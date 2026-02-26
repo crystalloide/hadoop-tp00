@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  tez-site.xml — Configuration Apache Tez
+  Moteur DAG pour l'exécution des requêtes Hive
+-->
+<configuration>
+
+  <!-- Emplacement du tarball Tez sur HDFS -->
+  <property>
+    <n>tez.lib.uris</n>
+    <value>${fs.defaultFS}/apps/tez/tez.tar.gz</value>
+    <description>Doit être uploadé sur HDFS par l'entrypoint</description>
+  </property>
+
+  <!-- Utiliser HDFS pour les ressources Tez -->
+  <property>
+    <n>tez.use.cluster.hadoop-libs</n>
+    <value>true</value>
+  </property>
+
+  <!-- Mémoire des conteneurs de tâches Tez -->
+  <property>
+    <n>tez.task.resource.memory.mb</n>
+    <value>512</value>
+  </property>
+
+  <!-- Mémoire de l'ApplicationMaster Tez -->
+  <property>
+    <n>tez.am.resource.memory.mb</n>
+    <value>512</value>
+  </property>
+
+  <!-- Activer la session Tez pour réutiliser les conteneurs -->
+  <property>
+    <n>tez.am.session.min.held-containers</n>
+    <value>0</value>
+  </property>
+
+</configuration>
