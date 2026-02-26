@@ -34,11 +34,11 @@ docker compose build
 # 2. Lancer le cluster
 docker compose up -d
 
-# 3. Suivre les logs de démarrage
+# 3. Suivre les logs de démarrage (<CTRL>+<C> pour sortir)
 docker compose logs -f bigdata
 
-# 4. Suivre les logs de démarrage ( CTRL+C pour sortir)
-netstat -anl | grep -E '9870|8088|19888|8080'
+# 4. Regarder les ports à l'écoute :
+netstat -anl | grep -E '9870|8088|19888|8080|10000'
 
 ```
 
