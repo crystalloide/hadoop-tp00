@@ -26,7 +26,7 @@ sudo rm -Rf ~/hadoop-tp00
 git clone https://github.com/crystalloide/hadoop-tp00
 
 cd ~/hadoop-tp00
-
+```
 ```bash
 # 1. Construire l'image (première fois : ~10-15 min)
 docker compose build
