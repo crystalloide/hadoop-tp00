@@ -108,6 +108,8 @@ hdfs dfs -cat hdfs://bigdata-node:9000/input/ventes.csv
 beeline -u "jdbc:hive2://localhost:10000" -n root
 
 # Dans Beeline :
+set hive.execution.engine=mr;
+
 SHOW DATABASES;
 CREATE DATABASE cours;
 USE cours;
