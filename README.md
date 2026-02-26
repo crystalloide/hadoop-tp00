@@ -121,7 +121,9 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 STORED AS TEXTFILE;
 
-LOAD DATA INPATH '/input/ventes.csv' INTO TABLE ventes;
+ALTER TABLE cours.ventes SET TBLPROPERTIES ("skip.header.line.count"="1");
+
+LOAD DATA INPATH '/input/ventes.csv' INTO TABLE cours.ventes;
 SELECT produit, SUM(montant) FROM cours.ventes GROUP BY produit;
 ```
 
