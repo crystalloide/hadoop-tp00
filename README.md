@@ -22,7 +22,7 @@ Environnement complet mono-conteneur pour un **cours Big Data**.
 cd ~
 sudo rm -Rf ~/hadoop-tp00
 
-#### Ici, on va simpleemnt cloner le projet :
+#### Ici, on va simplement cloner le projet :
 git clone https://github.com/crystalloide/hadoop-tp00
 
 cd ~/hadoop-tp00
