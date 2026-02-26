@@ -27,26 +27,30 @@ git clone https://github.com/crystalloide/hadoop-tp00
 
 cd ~/hadoop-tp00
 ```
+
+####  1. Construire l'image (première fois : ~10-15 min)
 ```bash
-# 1. Construire l'image (première fois : ~10-15 min)
 docker compose build
-
-# 2. Lancer le cluster
+```
+####  2. Lancer le cluster
+```bash
 docker compose up -d
-
-# 3. Suivre les logs de démarrage (<CTRL>+<C> pour sortir)
+```
+####  3. Suivre les logs de démarrage (<CTRL>+<C> pour sortir)
+```bash
 docker compose logs -f bigdata
+```
 
-# 4. Regarder les ports à l'écoute :
+####  4. Regarder les ports à l'écoute :
+```bash
 netstat -anl | grep -E '9870|8088|19888|8080|10000'
-
 ```
 
 Le cluster est prêt quand vous voyez `✅ Cluster Big Data prêt !`
 
 ---
 
-## 🌐 Interfaces Web
+####  🌐 Interfaces Web
 
 | Interface | URL | Lancer l'affichage |   
 |-----------|-----|--------------------|
@@ -57,14 +61,14 @@ Le cluster est prêt quand vous voyez `✅ Cluster Big Data prêt !`
 
 ---
 
-## 💻 Commandes essentielles
+####  💻 Commandes essentielles
 
 ### Ouvrir un terminal dans le conteneur
 ```bash
 docker exec -it bigdata-cluster bash
 ```
 
-### HDFS
+####  HDFS
 ```bash
 # Lister la racine
 hdfs dfs -ls /
@@ -82,7 +86,7 @@ hdfs dfs -put monFichier.csv /monrepertoire/
 hdfs dfs -cat /monrepertoire/monFichier.csv
 ```
 
-### MapReduce — WordCount (exemple classique)
+####  MapReduce — WordCount (exemple classique)
 ```bash
 # Créer un fichier test
 echo "hadoop hive hadoop tez hive hive" > /tmp/texte.txt
@@ -98,7 +102,7 @@ hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar \
 hdfs dfs -cat /output/part-r-00000
 ```
 
-### Hive via Beeline (HiveServer2)
+####  Hive via Beeline (HiveServer2)
 ```bash
 
 echo "id,produit,montant" > ventes.csv && for i in {1..10}; do echo "$i,Produit_$(printf "%02d" $i),$((10 + RANDOM % 90)).$((RANDOM % 99))" >> ventes.csv; done
@@ -129,7 +133,12 @@ LOAD DATA INPATH '/input/ventes.csv' INTO TABLE cours.ventes;
 SELECT produit, SUM(montant) FROM cours.ventes GROUP BY produit;
 ```
 
-### Sqoop — Importer depuis MySQL
+####  Zeppelin
+Accéder à http://localhost:8080 et créer un nouveau notebook.  
+Utiliser l'interpréteur `%hive` pour exécuter du HQL directement dans le navigateur.
+
+
+####  Sqoop — Importer depuis MySQL
 ```bash
 # Lister les bases MySQL distantes
 sqoop list-databases \
@@ -154,13 +163,9 @@ sqoop import \
   --num-mappers 1
 ```
 
-### Zeppelin
-Accéder à http://localhost:8080 et créer un nouveau notebook.  
-Utiliser l'interpréteur `%hive` pour exécuter du HQL directement dans le navigateur.
-
 ---
 
-## ⚙️ Configuration
+####  ⚙️ Configuration
 
 | Fichier | Description |
 |---------|-------------|
@@ -172,7 +177,7 @@ Utiliser l'interpréteur `%hive` pour exécuter du HQL directement dans le navig
 | `config/tez/tez-site.xml` | Mémoire DAG, chemin HDFS Tez |
 | `config/zeppelin/zeppelin-site.xml` | Port, accès anonyme |
 
-### Ajuster la mémoire
+####  Ajuster la mémoire
 Modifier `yarn.nodemanager.resource.memory-mb` dans `yarn-site.xml` et `mem_limit` dans `docker-compose.yml` selon la RAM disponible :
 
 | RAM machine | Recommandé |
@@ -183,7 +188,7 @@ Modifier `yarn.nodemanager.resource.memory-mb` dans `yarn-site.xml` et `mem_limi
 
 ---
 
-## 🛑 Arrêt et nettoyage
+####  🛑 Arrêt et nettoyage
 
 ```bash
 # Arrêter le cluster (volumes conservés)
@@ -195,7 +200,7 @@ docker compose down -v
 
 ---
 
-## ⚠️ Notes importantes
+####  ⚠️ Notes importantes
 
 - **Metastore Derby** : embarqué dans Hive, parfait pour un cours. Limité à une seule connexion simultanée. Remplacer par MySQL pour un usage multi-utilisateurs.
 - **Pas de Kerberos** : la sécurité est désactivée pour simplifier l'apprentissage.
