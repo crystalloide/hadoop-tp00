@@ -32,20 +32,21 @@ cd ~/hadoop-tp00
 ```bash
 docker compose build
 ```
+
 ####  2. Lancer le cluster
 ```bash
 docker compose up -d
 ```
-####  3. Suivre les logs de démarrage (<CTRL>+<C> pour sortir)
-```bash
-docker compose logs -f bigdata
-```
 
-####  4. Regarder les ports à l'écoute :
+####  3. Regarder les ports à l'écoute :
 ```bash
 netstat -anl | grep -E '9870|8088|19888|8080|10000'
 ```
 
+####  4. Suivre les logs de démarrage (<CTRL>+<C> pour sortir)
+```bash
+docker compose logs -f bigdata
+```
 Le cluster est prêt quand vous voyez `✅ Cluster Big Data prêt !`
 
 ---
