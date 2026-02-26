@@ -2,39 +2,39 @@
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 <!--
   tez-site.xml — Configuration Apache Tez
-  Moteur DAG pour l'exécution des requêtes Hive
+  URI absolue obligatoire : ${fs.defaultFS} n'est pas résolu par Tez
 -->
 <configuration>
 
-  <!-- Emplacement du tarball Tez sur HDFS -->
+  <!-- URI absolue du tarball Tez sur HDFS -->
   <property>
-    <n>tez.lib.uris</n>
-    <value>${fs.defaultFS}/apps/tez/tez.tar.gz</value>
-    <description>Doit être uploadé sur HDFS par l'entrypoint</description>
+    <name>tez.lib.uris</name>
+    <value>hdfs://bigdata-node:9000/apps/tez/tez.tar.gz</value>
+    <description>Chemin HDFS complet — ne pas utiliser de variable ici</description>
   </property>
 
-  <!-- Utiliser HDFS pour les ressources Tez -->
+  <!-- Réutiliser les libs Hadoop du cluster plutôt que de les re-packager -->
   <property>
-    <n>tez.use.cluster.hadoop-libs</n>
+    <name>tez.use.cluster.hadoop-libs</name>
     <value>true</value>
-  </property>
-
-  <!-- Mémoire des conteneurs de tâches Tez -->
-  <property>
-    <n>tez.task.resource.memory.mb</n>
-    <value>512</value>
   </property>
 
   <!-- Mémoire de l'ApplicationMaster Tez -->
   <property>
-    <n>tez.am.resource.memory.mb</n>
+    <name>tez.am.resource.memory.mb</name>
     <value>512</value>
   </property>
 
-  <!-- Activer la session Tez pour réutiliser les conteneurs -->
+  <!-- Mémoire des tâches Tez -->
   <property>
-    <n>tez.am.session.min.held-containers</n>
-    <value>0</value>
+    <name>tez.task.resource.memory.mb</name>
+    <value>512</value>
+  </property>
+
+  <!-- Timeout de session Tez (évite les sessions zombie) -->
+  <property>
+    <name>tez.session.am.dag.submit.timeout.secs</name>
+    <value>300</value>
   </property>
 
 </configuration>
