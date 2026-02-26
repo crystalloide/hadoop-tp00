@@ -103,6 +103,7 @@ hdfs dfs -cat /output/part-r-00000
 
 echo "id,produit,montant" > ventes.csv && for i in {1..10}; do echo "$i,Produit_$(printf "%02d" $i),$((10 + RANDOM % 90)).$((RANDOM % 99))" >> ventes.csv; done
 hdfs dfs -put ventes.csv /input/ventes.csv
+hdfs dfs -cat hdfs://bigdata-node:9000/input/ventes.csv
 
 beeline -u "jdbc:hive2://localhost:10000" -n root
 
@@ -121,7 +122,7 @@ FIELDS TERMINATED BY ','
 STORED AS TEXTFILE;
 
 LOAD DATA INPATH '/input/ventes.csv' INTO TABLE ventes;
-SELECT produit, SUM(montant) FROM ventes GROUP BY produit;
+SELECT produit, SUM(montant) FROM cours.ventes GROUP BY produit;
 ```
 
 ### Sqoop — Importer depuis MySQL
