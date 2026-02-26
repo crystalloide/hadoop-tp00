@@ -16,6 +16,17 @@ Environnement complet mono-conteneur pour un **cours Big Data**.
 
 ## 🚀 Démarrage rapide
 
+### Étape 1 : Préparation de l'environnement
+
+```bash
+cd ~
+sudo rm -Rf ~/hadoop-tp00
+
+#### Ici, on va simpleemnt cloner le projet :
+git clone https://github.com/crystalloide/hadoop-tp00
+
+cd ~/hadoop-tp00
+
 ```bash
 # 1. Construire l'image (première fois : ~10-15 min)
 docker compose build
