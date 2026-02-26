@@ -48,12 +48,12 @@ Le cluster est prêt quand vous voyez `✅ Cluster Big Data prêt !`
 
 ## 🌐 Interfaces Web
 
-| Interface | URL |
-|-----------|-----|
-| HDFS NameNode | http://localhost:9870 |
-| YARN ResourceManager | http://localhost:8088 |
-| MapReduce History | http://localhost:19888 |
-| Zeppelin Notebooks | http://localhost:8080 |
+| Interface | URL | Lancer l'affichage |   
+|-----------|-----|--------------------|
+| HDFS NameNode | http://localhost:9870 | firefox http://localhost:9870 |
+| YARN ResourceManager | http://localhost:8088 | firefox http://localhost:8088 |
+| MapReduce History | http://localhost:19888 | firefox http://localhost:19888 |
+| Zeppelin Notebooks | http://localhost:8080  firefox http://localhost:8080 |
 
 ---
 
