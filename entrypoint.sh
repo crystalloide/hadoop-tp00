@@ -56,6 +56,7 @@ $HADOOP_HOME/bin/hdfs dfs -mkdir -p /user/hive/warehouse || true
 $HADOOP_HOME/bin/hdfs dfs -mkdir -p /tmp || true
 $HADOOP_HOME/bin/hdfs dfs -chmod g+w /tmp || true
 $HADOOP_HOME/bin/hdfs dfs -chmod g+w /user/hive/warehouse || true
+$HADOOP_HOME/bin/hdfs dfs -chmod 777 /tmp || true
 
 if ! $HADOOP_HOME/bin/hdfs dfs -test -d /apps/tez; then
     echo "   → Upload de la lib Tez..."
