@@ -17,6 +17,7 @@ ENV HIVE_VERSION=3.1.3
 ENV TEZ_VERSION=0.10.3
 ENV SQOOP_VERSION=1.4.7
 ENV ZEPPELIN_VERSION=0.11.1
+# MySQL Connector/J (com.mysql depuis 8.1, encore sous mysql/ pour 8.0.x)
 ENV MYSQL_CONNECTOR_VERSION=8.0.33
 
 # ── Répertoires d'installation ───────────────────────────────
@@ -51,44 +52,59 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     net-tools \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# ── 2. SSH sans mot de passe (requis par Hadoop) ─────────────
+# ── 2. SSH sans mot de passe ─────────────────────────────────
 RUN ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa \
  && cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys \
  && chmod 0600 ~/.ssh/authorized_keys \
  && echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
 
 # ── 3. Hadoop ────────────────────────────────────────────────
-# Hadoop 3.3.6 encore disponible sur le miroir principal
-RUN wget -q "https://downloads.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz" \
+RUN wget --tries=3 --timeout=120 -q \
+    "https://downloads.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz" \
  && tar -xzf hadoop-${HADOOP_VERSION}.tar.gz -C /opt \
  && mv /opt/hadoop-${HADOOP_VERSION} ${HADOOP_HOME} \
  && rm hadoop-${HADOOP_VERSION}.tar.gz
 
-# ── 4. Hive ──────────────────────────────────────────────────
-# Hive 3.1.3 déplacé sur archive.apache.org (plus sur le miroir principal)
-RUN wget -q "https://archive.apache.org/dist/hive/hive-${HIVE_VERSION}/apache-hive-${HIVE_VERSION}-bin.tar.gz" \
+# ── 4. Hive (archive.apache.org) ─────────────────────────────
+RUN wget --tries=3 --timeout=120 -q \
+    "https://archive.apache.org/dist/hive/hive-${HIVE_VERSION}/apache-hive-${HIVE_VERSION}-bin.tar.gz" \
  && tar -xzf apache-hive-${HIVE_VERSION}-bin.tar.gz -C /opt \
  && mv /opt/apache-hive-${HIVE_VERSION}-bin ${HIVE_HOME} \
  && rm apache-hive-${HIVE_VERSION}-bin.tar.gz
 
-# ── 5. Tez ───────────────────────────────────────────────────
-# Tez 0.10.3 sur archive.apache.org
+# ── 5. Tez (archive.apache.org) ──────────────────────────────
 RUN mkdir -p ${TEZ_HOME}/conf \
- && wget -q "https://archive.apache.org/dist/tez/${TEZ_VERSION}/apache-tez-${TEZ_VERSION}-bin.tar.gz" \
+ && wget --tries=3 --timeout=120 -q \
+    "https://archive.apache.org/dist/tez/${TEZ_VERSION}/apache-tez-${TEZ_VERSION}-bin.tar.gz" \
  && tar -xzf apache-tez-${TEZ_VERSION}-bin.tar.gz -C ${TEZ_HOME} --strip-components=1 \
  && rm apache-tez-${TEZ_VERSION}-bin.tar.gz
 
-# ── 6. Sqoop + connecteur MySQL JDBC ─────────────────────────
-RUN wget -q "https://archive.apache.org/dist/sqoop/${SQOOP_VERSION}/sqoop-${SQOOP_VERSION}.bin__hadoop-2.6.0.tar.gz" \
+# ── 6a. Sqoop (archive.apache.org) ───────────────────────────
+# Séparé du connector pour identifier les échecs séparément
+RUN wget --tries=3 --timeout=120 -v \
+    "https://archive.apache.org/dist/sqoop/${SQOOP_VERSION}/sqoop-${SQOOP_VERSION}.bin__hadoop-2.6.0.tar.gz" \
  && tar -xzf sqoop-${SQOOP_VERSION}.bin__hadoop-2.6.0.tar.gz -C /opt \
  && mv /opt/sqoop-${SQOOP_VERSION}.bin__hadoop-2.6.0 ${SQOOP_HOME} \
- && rm sqoop-${SQOOP_VERSION}.bin__hadoop-2.6.0.tar.gz \
- && wget -q -O ${SQOOP_HOME}/lib/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}.jar \
-    "https://repo1.maven.org/maven2/mysql/mysql-connector-java/${MYSQL_CONNECTOR_VERSION}/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}.jar"
+ && rm sqoop-${SQOOP_VERSION}.bin__hadoop-2.6.0.tar.gz
 
-# ── 7. Zeppelin ───────────────────────────────────────────────
-# Zeppelin 0.11.1 sur archive.apache.org
-RUN wget -q "https://archive.apache.org/dist/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-all.tgz" \
+# ── 6b. MySQL Connector/J (Maven Central) ────────────────────
+# Utilise curl avec fallback pour éviter les timeout silencieux de wget
+RUN curl --retry 3 --max-time 120 --location --fail \
+    -o ${SQOOP_HOME}/lib/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}.jar \
+    "https://repo1.maven.org/maven2/mysql/mysql-connector-java/${MYSQL_CONNECTOR_VERSION}/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}.jar" \
+ && echo "MySQL connector téléchargé : $(ls -lh ${SQOOP_HOME}/lib/mysql-connector-java-*.jar)"
+
+# ── 6c. Fix conflit Guava Sqoop vs Hadoop 3 ─────────────────
+# Hadoop 3.x embarque Guava 27+ ; Sqoop 1.4.7 attend Guava 11/14 → NoSuchMethodError
+# On remplace le vieux guava dans les libs Sqoop par celui de Hadoop
+RUN cp ${HADOOP_HOME}/share/hadoop/common/lib/guava-*.jar ${SQOOP_HOME}/lib/ \
+ && rm -f ${SQOOP_HOME}/lib/guava-11*.jar \
+ && rm -f ${SQOOP_HOME}/lib/guava-14*.jar \
+ && echo "Guava Sqoop remplacé : $(ls ${SQOOP_HOME}/lib/guava-*.jar)"
+
+# ── 7. Zeppelin (archive.apache.org) ─────────────────────────
+RUN wget --tries=3 --timeout=300 -q \
+    "https://archive.apache.org/dist/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-all.tgz" \
  && tar -xzf zeppelin-${ZEPPELIN_VERSION}-bin-all.tgz -C /opt \
  && mv /opt/zeppelin-${ZEPPELIN_VERSION}-bin-all ${ZEPPELIN_HOME} \
  && rm zeppelin-${ZEPPELIN_VERSION}-bin-all.tgz
@@ -113,7 +129,6 @@ COPY config/zeppelin/zeppelin-env.sh     ${ZEPPELIN_HOME}/conf/zeppelin-env.sh
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# ── Ports exposés ─────────────────────────────────────────────
 EXPOSE 9870 9864 8088 19888 10000 9083 8080
 
 ENTRYPOINT ["/entrypoint.sh"]
