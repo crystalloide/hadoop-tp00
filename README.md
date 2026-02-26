@@ -84,6 +84,7 @@ hdfs dfs -cat /monrepertoire/monFichier.csv
 ```bash
 # Créer un fichier test
 echo "hadoop hive hadoop tez hive hive" > /tmp/texte.txt
+hdfs dfs -mkdir /input
 hdfs dfs -put /tmp/texte.txt /input/
 
 # Lancer le job WordCount
