@@ -131,6 +131,7 @@ COPY config/tez/tez-site.xml             ${TEZ_HOME}/conf/tez-site.xml
 # ── 10. Configuration Zeppelin ────────────────────────────────
 COPY config/zeppelin/zeppelin-site.xml   ${ZEPPELIN_HOME}/conf/zeppelin-site.xml
 COPY config/zeppelin/zeppelin-env.sh     ${ZEPPELIN_HOME}/conf/zeppelin-env.sh
+COPY config/zeppelin/interpreter.json    ${ZEPPELIN_HOME}/conf/interpreter.json
 
 # ── 11. Entrypoint ────────────────────────────────────────────
 COPY entrypoint.sh /entrypoint.sh
