@@ -2,73 +2,86 @@
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 <!--
   hive-site.xml — Configuration Apache Hive
-  Metastore embarqué Derby | Exécution via Tez
+  Metastore embarqué Derby | Exécution via Tez (sans pre-warming)
 -->
 <configuration>
 
-  <!-- ── Metastore ─────────────────────────────────────────── -->
+  <!-- ── Metastore Derby embarqué ──────────────────────────── -->
   <property>
-    <n>javax.jdo.option.ConnectionURL</n>
+    <name>javax.jdo.option.ConnectionURL</name>
     <value>jdbc:derby:;databaseName=/opt/hive/metastore_db;create=true</value>
-    <description>Derby embarqué — remplacer par MySQL pour la prod</description>
   </property>
   <property>
-    <n>javax.jdo.option.ConnectionDriverName</n>
+    <name>javax.jdo.option.ConnectionDriverName</name>
     <value>org.apache.derby.jdbc.EmbeddedDriver</value>
   </property>
   <property>
-    <n>javax.jdo.option.ConnectionUserName</n>
+    <name>javax.jdo.option.ConnectionUserName</name>
     <value>APP</value>
   </property>
   <property>
-    <n>javax.jdo.option.ConnectionPassword</n>
+    <name>javax.jdo.option.ConnectionPassword</name>
     <value>mine</value>
   </property>
 
   <!-- Adresse du Metastore Thrift -->
   <property>
-    <n>hive.metastore.uris</n>
-    <value>thrift://bigdata-node:9083</value>
+    <name>hive.metastore.uris</name>
+    <value>thrift://localhost:9083</value>
   </property>
 
   <!-- ── Warehouse HDFS ─────────────────────────────────────── -->
   <property>
-    <n>hive.metastore.warehouse.dir</n>
+    <name>hive.metastore.warehouse.dir</name>
     <value>/user/hive/warehouse</value>
   </property>
 
   <!-- ── Moteur d'exécution : Tez ──────────────────────────── -->
   <property>
-    <n>hive.execution.engine</n>
+    <name>hive.execution.engine</name>
     <value>tez</value>
-    <description>Utiliser Tez (plus rapide que MapReduce)</description>
+  </property>
+
+  <!-- ── Désactiver le pre-warming des sessions Tez ────────────
+       Par défaut Hive pré-initialise N sessions Tez au démarrage,
+       ce qui bloque HiveServer2 si YARN/Tez n'est pas encore stable.
+       On désactive pour un cluster mono-nœud de cours. -->
+  <property>
+    <name>hive.server2.tez.initialize.default.sessions</name>
+    <value>false</value>
+  </property>
+  <property>
+    <name>hive.server2.tez.sessions.per.default.queue</name>
+    <value>0</value>
   </property>
 
   <!-- ── HiveServer2 ────────────────────────────────────────── -->
   <property>
-    <n>hive.server2.thrift.port</n>
+    <name>hive.server2.thrift.port</name>
     <value>10000</value>
   </property>
   <property>
-    <n>hive.server2.thrift.bind.host</n>
+    <name>hive.server2.thrift.bind.host</name>
     <value>0.0.0.0</value>
   </property>
-
-  <!-- Authentification désactivée (cours uniquement) -->
   <property>
-    <n>hive.server2.authentication</n>
+    <name>hive.server2.authentication</name>
     <value>NONE</value>
   </property>
 
-  <!-- ── Optimisations pédagogiques ────────────────────────── -->
-  <!-- Afficher les statistiques de requêtes -->
+  <!-- Désactiver le logging des opérations (plus léger en cours) -->
   <property>
-    <n>hive.stats.autogather</n>
+    <name>hive.server2.logging.operation.enabled</name>
+    <value>false</value>
+  </property>
+
+  <!-- ── Optimisations ─────────────────────────────────────── -->
+  <property>
+    <name>hive.stats.autogather</name>
     <value>true</value>
   </property>
-  <!-- Activer le vectorized query execution -->
   <property>
-    <n>hive.vectorized.execution.enabled</n>
+    <name>hive.vectorized.execution.enabled</name>
     <value>true</value>
   </property>
 
